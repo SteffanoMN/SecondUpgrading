@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -23,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private TeamAdapter adapter;
     private ArrayList<TeamModel> arrayList;
     private RecyclerView recyclerView;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerView = findViewById(R.id.recview);
+        progressBar = findViewById(R.id.progress_bar);
+        addData();
     }
 
         private void addData() {
@@ -52,6 +58,18 @@ public class MainActivity extends AppCompatActivity {
                                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                 recyclerView.setLayoutManager(layoutManager);
                                 recyclerView.setAdapter(adapter);
+
+                                adapter.setOnItemClickListener(new TeamAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(int position) {
+                                        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                                        intent.putExtra("strTeam", arrayList.get(position).getTeamName());
+                                        intent.putExtra("strDescriptionEN", arrayList.get(position).getTeamDesc());
+                                        intent.putExtra("strTeamBadge", arrayList.get(position).getTeamImage());
+                                        startActivity(intent);
+                                    }
+                                });
+                                progressBar.setVisibility(View.GONE);
                             } catch (JSONException e) {
                                 Log.d("error", e.toString());
                             }
